@@ -6,17 +6,24 @@
 #include <string>
 #include <sstream>
 
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+	x;\
+	ASSERT(GLLogCall())
+
 static void GLClearError()
 {
 	while (glGetError() != GL_NO_ERROR);
 }
 
-static void GLCheckError()
+static bool GLLogCall()
 {
 	while (GLenum error = glGetError())
 	{
 		std::cout << "[OpenGL Error] (" << error << ")" << std::endl;
+		return false;
 	}
+	return true;
 }
 
 struct ShaderProgramSource
@@ -158,9 +165,7 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		GLClearError();
-		glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
-		GLCheckError();
+		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
 		
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
