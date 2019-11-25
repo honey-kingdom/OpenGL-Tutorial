@@ -159,6 +159,10 @@ int main(void)
 	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	GLCall(glUseProgram(shader));
+
+	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+	ASSERT(location != -1); // asserted even when u_Color is not used in shader
+	GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
 		
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -166,7 +170,7 @@ int main(void)
 		/* Render here */
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 		
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
